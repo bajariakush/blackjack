@@ -24,7 +24,7 @@ class BlackJackGame:
         if os.path.exists(filename):
             with open(filename, 'rb') as f:
                 return pickle.load(f)
-            return {}
+        return {}
 
 
     def run(self):
