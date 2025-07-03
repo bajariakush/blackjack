@@ -29,10 +29,24 @@ class BlackJackGame:
 
     def run(self):
         '''starts the game'''
-        print("Welcome to Blackjack!\n")
+        print("Kush's Blackjack Table\n")
         while True:
             try:
-                num_players = int(input("How many players will be playinng Blackjack? (1-4): "))
+                recurring_player = input("Welcome to Blackjack! Are you new to the game? (y/n): ").lower()
+                if recurring_player == 'y':
+                    print("Welcome back! Please enter you pin to continue.")
+                elif recurring_player == 'n':
+                    print("Welcome to the game! Let's get started.")
+                    break
+                else:
+                    print("Invalid input. Please enter 'y' or 'n'.")
+            except ValueError:
+                print("Invalid input. Please enter 'y' or 'n'.")
+        
+                
+                
+                
+                
                 if 1 <= num_players <= 4:
                     break
                 print("Invalid number of players. Please enter a number between 1 and 4.")
