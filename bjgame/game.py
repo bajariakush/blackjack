@@ -43,23 +43,21 @@ class BlackJackGame:
             except ValueError:
                 print("Invalid input. Please enter 'y' or 'n'.")
 
-            testing testing
-                
-                
-                
-                if 1 <= num_players <= 4:
-                    break
-                print("Invalid number of players. Please enter a number between 1 and 4.")
-            except ValueError:
-                print("Invalid input. Please enter a number.")
-        player_banks = self.load_player_banks()
-        for i in range(num_players):
-            name = input(f"Enter name for player {i+1}: ")
-            player_banks = player_banks.get(name, 100)
-            self.players.append(Player(name, player_banks))
-        print("Players:", [player.name for player in self.players])
-        print("Dealer: ", [self.dealer.name])
-
+        while True:
+                try:
+                    num_players = int(input("Enter the number of players (1-4): "))
+                    if 1 <= num_players <= 4:
+                        break
+                    print("Invalid number of players. Please enter a number between 1 and 4.")
+                except ValueError:
+                    print("Invalid input. Please enter a number.")
+                    player_banks = self.load_player_banks()
+                    for i in range(num_players):
+                        name = input(f"Enter name for player {i+1}: ")
+                        player_banks = player_banks.get(name, 100)
+                        self.players.append(Player(name, player_banks))
+                        print("Players:", [player.name for player in self.players])
+                        print("Dealer: ", [self.dealer.name])
 
         while True:
             print("\nStarting a new round...")
