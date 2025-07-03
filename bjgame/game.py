@@ -30,35 +30,66 @@ class BlackJackGame:
     def run(self):
         '''starts the game'''
         print("Kush's Blackjack Table\n")
+        
+        # get number of players
         while True:
             try:
-                recurring_player = input("Welcome to Blackjack! Are you new to the game? (y/n): ").lower()
-                if recurring_player == 'y':
-                    print("Welcome! Please create a username to continue.")
-                    username = input("Create a username: ")
-                    player_banks = self.load_player_banks()
-                    if username in player_banks:
-                        print(f'Welcome back {username}! Your current bank balance is ${player_banks[username]}.')
-                    else:
-                        print(f'Welcome {username}! Your starting balance is $100.')
-                        player_banks[username] = 100
-                        self.players.append(Player(username, player_banks[username]))
+                num_players = int(input("Welcome to Blackjack! How many players will be playing today? (1-4): "))
+                if 1 <= num_players <= 4:
                     break
-                elif recurring_player == 'n':
-                    print("Welcome back! Please enter your username to continue.")
-                    username = input("Enter your username: ")
-                    player_banks = self.load_player_banks()
-                    if username in player_banks:
-                        print(f'Welcome back {username}! Your current bank balance is ${player_banks[username]}.')
-                    else:
-                        print(f'Welcome back {username}! It seems you have no previous bank balance. Starting with $100.')
-                        player_banks[username] = 100
-                        self.players.append(Player(username, player_banks[username]))
-                    break
-                else:
-                    print("Invalid input. Please enter 'y' or 'n'.")
+                print("Invalid number of players. Please enter a number between 1 and 4.")
             except ValueError:
-                print("Invalid input. Please enter 'y' or 'n'.")
+                print("Invalid input. Please enter a number.")
+        
+        # Load existing player banks
+        player_banks = self.load_player_banks()
+        
+        # Set up each player
+        for i in range(num_players):
+            print(f"\n--- Setting up Player {i+1} ---")
+            while True:
+                try:
+                    is_new = input(f"Player {i+1}, are you new to the game? (y/n): ").lower()
+                    if is_new == 'y':
+                        # New player - create username
+                        while True:
+                            username = input(f"Create a username for player {i+1}: ").strip()
+                            if username:
+                                if username in player_banks:
+                                    print(f'That username already exists! Welcome back {username}! Your current bank balance is ${player_banks[username]}.')
+                                    self.players.append(Player(username, player_banks[username]))
+                                else:
+                                    print(f'Welcome {username}! Your starting balance is $100.')
+                                    player_banks[username] = 100
+                                    self.players.append(Player(username, 100))
+                                break
+                            else:
+                                print("Username cannot be empty. Please try again.")
+                        break
+                    elif is_new == 'n':
+                        # Returning player - enter existing username
+                        while True:
+                            username = input(f"Player {i+1}, enter your username: ").strip()
+                            if username:
+                                if username in player_banks:
+                                    print(f'Welcome back {username}! Your current bank balance is ${player_banks[username]}.')
+                                    self.players.append(Player(username, player_banks[username]))
+                                else:
+                                    print(f'Username "{username}" not found. Starting with $100.')
+                                    player_banks[username] = 100
+                                    self.players.append(Player(username, 100))
+                                break
+                            else:
+                                print("Username cannot be empty. Please try again.")
+                        break
+                    else:
+                        print("Invalid input. Please enter 'y' for new player or 'n' for returning player.")
+                except ValueError:
+                    print("Invalid input. Please enter 'y' or 'n'.")
+        
+        print(f"\nPlayers: {[player.name for player in self.players]}")
+        print(f"Dealer: {self.dealer.name}")
+        print("\nLet's play Blackjack!\n")
 
         while True:
             print("\nStarting a new round...")
@@ -96,9 +127,9 @@ class BlackJackGame:
             for player in self.players:
                 print(f"\n{player.name}'s turn:")
                 while True:
-                    print(f"Your hand: {player.hand}, value: {player.hand_value()}")
+                    print(f"{player.name}'s hand: {player.hand}, value: {player.hand_value()}")
                     if player.bust():
-                        print('You busted!')
+                        print(f"{player.name} busted!")
                         break
                     move = input('Hit or stand? (h/s): ').lower()
                     if move == 'h':
@@ -120,16 +151,16 @@ class BlackJackGame:
             # handle bets
             for player in self.players:
                 if player.bust():
-                    print(f"{player.name} lost their bet of {bets[player]}.")
+                    print(f"\n{player.name} lost their bet of {bets[player]}.")
                     player.adjust_bank(-bets[player])
                 elif self.dealer.bust() or player.hand_value() > self.dealer.hand_value():
-                    print(f"{player.name} wins {bets[player] * 2}!")
+                    print(f"\n{player.name} wins {bets[player] * 2}!")
                     player.adjust_bank(bets[player] * 2)
                 elif player.hand_value() < self.dealer.hand_value():
-                    print(f"{player.name} lost their bet of {bets[player]}.")
+                    print(f"\n{player.name} lost their bet of {bets[player]}.")
                     player.adjust_bank(-bets[player])
                 else:
-                    print(f"{player.name} ties with the dealer. Bet returned.")
+                    print(f"\n{player.name} ties with the dealer. Bet returned.")
                     player.adjust_bank(0)
 
             # check for cut card
@@ -142,7 +173,9 @@ class BlackJackGame:
             play_again = input("\nDo you want to play another round? (y/n): ").lower()
             if play_again != 'y':
                 print("Thanks for playing!")
-                print(f'Your remaining bank balance is ${player_banks[username]}.')
+                print("\nFinal bank balances:")
+                for player in self.players:
+                    print(f"{player.name}: ${player.bank}")
                 break
 
         self.save_player_banks()
