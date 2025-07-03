@@ -34,30 +34,31 @@ class BlackJackGame:
             try:
                 recurring_player = input("Welcome to Blackjack! Are you new to the game? (y/n): ").lower()
                 if recurring_player == 'y':
-                    print("Welcome back! Please enter you pin to continue.")
+                    print("Welcome! Please create a username to continue.")
+                    username = input("Create a username: ")
+                    player_banks = self.load_player_banks()
+                    if username in player_banks:
+                        print(f'Welcome back {username}! Your current bank balance is ${player_banks[username]}.')
+                    else:
+                        print(f'Welcome {username}! Your starting balance is $100.')
+                        player_banks[username] = 100
+                        self.players.append(Player(username, player_banks[username]))
+                    break
                 elif recurring_player == 'n':
-                    print("Welcome to the game! Let's get started.")
+                    print("Welcome back! Please enter your username to continue.")
+                    username = input("Enter your username: ")
+                    player_banks = self.load_player_banks()
+                    if username in player_banks:
+                        print(f'Welcome back {username}! Your current bank balance is ${player_banks[username]}.')
+                    else:
+                        print(f'Welcome back {username}! It seems you have no previous bank balance. Starting with $100.')
+                        player_banks[username] = 100
+                        self.players.append(Player(username, player_banks[username]))
                     break
                 else:
                     print("Invalid input. Please enter 'y' or 'n'.")
             except ValueError:
                 print("Invalid input. Please enter 'y' or 'n'.")
-
-        while True:
-                try:
-                    num_players = int(input("Enter the number of players (1-4): "))
-                    if 1 <= num_players <= 4:
-                        break
-                    print("Invalid number of players. Please enter a number between 1 and 4.")
-                except ValueError:
-                    print("Invalid input. Please enter a number.")
-                    player_banks = self.load_player_banks()
-                    for i in range(num_players):
-                        name = input(f"Enter name for player {i+1}: ")
-                        player_banks = player_banks.get(name, 100)
-                        self.players.append(Player(name, player_banks))
-                        print("Players:", [player.name for player in self.players])
-                        print("Dealer: ", [self.dealer.name])
 
         while True:
             print("\nStarting a new round...")
@@ -141,6 +142,7 @@ class BlackJackGame:
             play_again = input("\nDo you want to play another round? (y/n): ").lower()
             if play_again != 'y':
                 print("Thanks for playing!")
+                print(f'Your remaining bank balance is ${player_banks[username]}.')
                 break
 
         self.save_player_banks()
