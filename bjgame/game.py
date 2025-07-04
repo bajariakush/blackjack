@@ -101,7 +101,7 @@ class BlackJackGame:
             for player in self.players:
                 while True:
                     try:
-                        bet = int(input(f'{player.name}, bets are open (1-{player.bank}): '))
+                        bet = int(input(f'Bets are now open, {player.name} please place your bet (1-{player.bank}): '))
                         if 1 <= bet <= player.bank:
                             bets[player] = bet
                             break
@@ -165,7 +165,7 @@ class BlackJackGame:
 
             # check for cut card
             if "CUT_CARD" in self.shoe:
-                print("Cut card reached. Reshuffling the shoe.")
+                print("\nCut card reached. Reshuffling the shoe.")
                 self.shoe = create_shoe()
                 insert_cut_card(self.shoe)
 
